@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    include: secret  # application-secret.yml을 포함
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    url: jdbc:mysql://localhost:3306/teample_db?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
