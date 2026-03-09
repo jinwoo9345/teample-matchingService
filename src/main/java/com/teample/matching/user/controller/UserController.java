@@ -4,15 +4,13 @@ package com.teample.matching.user.controller;
 import com.teample.matching.user.dto.LoginRequestDto;
 import com.teample.matching.user.dto.LoginResponseDto;
 import com.teample.matching.user.dto.SignupRequestDto;
+import com.teample.matching.user.dto.UserMypageResponseDto;
 import com.teample.matching.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -38,4 +36,14 @@ public class UserController {
 
         return ResponseEntity.ok(responseDto);
     }
+
+    //3, 유저 상세보기 (마이페이지)
+    @GetMapping("/mypage/{userId}")
+    public ResponseEntity<UserMypageResponseDto> getMypage(@PathVariable Long userId) {
+
+        UserMypageResponseDto mypageResponseDto = userService.getUserMypage(userId);
+
+        return ResponseEntity.ok(mypageResponseDto);
+    }
+
 }
