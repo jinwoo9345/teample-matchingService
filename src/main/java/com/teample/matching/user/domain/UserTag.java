@@ -1,7 +1,7 @@
 package com.teample.matching.user.domain;
 
 
-import com.teample.matching.common.Tag;
+import com.teample.matching.common.domain.Tag;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
