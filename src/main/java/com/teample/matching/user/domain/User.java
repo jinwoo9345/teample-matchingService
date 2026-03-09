@@ -29,10 +29,17 @@ public class User {
 
     private String profile;
 
+    @Column(columnDefinition = "TEXT")
+    private String introduction;
+
     private int temperature;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tier_id")
     private Tier tier;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userTag_id")
+    private UserTag userTag;
 
 }
