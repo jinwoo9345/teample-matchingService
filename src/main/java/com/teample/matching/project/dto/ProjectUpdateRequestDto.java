@@ -11,6 +11,7 @@ public class ProjectUpdateRequestDto {
 
     private String title;
     private String content;
+    private int capacity;
     private String period;
     private LocalDateTime deadline;
 

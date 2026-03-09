@@ -62,7 +62,7 @@ public class ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 프로젝트입니다!"));
 
-        project.update(requestDto.getTitle(),requestDto.getContent(),requestDto.getPeriod(),requestDto.getDeadline());
+        project.update(requestDto.getTitle(),requestDto.getContent(),requestDto.getCapacity(),requestDto.getPeriod(),requestDto.getDeadline());
     }
 
     @Transactional

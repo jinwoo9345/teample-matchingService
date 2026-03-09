@@ -26,6 +26,9 @@ public class Project extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false)
+    private int capacity;
+
     @Enumerated(EnumType.STRING)
     private ProjectStatus status = ProjectStatus.RECRUITING;
 
@@ -38,18 +41,20 @@ public class Project extends BaseTimeEntity {
     private User leader;
 
     @Builder // 빌더 패턴 추가
-    public Project(String title, String content, ProjectStatus status, LocalDateTime deadline,String period, User leader) {
+    public Project(String title, String content,int capacity, LocalDateTime deadline,String period, User leader) {
         this.title = title;
         this.content = content;
+        this.capacity = capacity;
         this.deadline = deadline;
         this.period = period;
         this.leader = leader;
     }
 
-    public void update(String title, String content, String period,LocalDateTime deadline) {
+    public void update(String title, String content,int capacity, String period,LocalDateTime deadline) {
         this.title = title;
         this.content = content;
         this.period = period;
         this.deadline = deadline;
+        this.capacity = capacity;
     }
 }

@@ -18,6 +18,7 @@ public class ProjectDetailResponseDto {
     private Long leaderId;
     private String period;
     private ProjectStatus status;
+    private int capacity;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private String content;
@@ -29,6 +30,7 @@ public class ProjectDetailResponseDto {
         this.deadline = project.getDeadline();
         this.leaderId = project.getLeader().getId();
         this.period = project.getPeriod();
+        this.capacity = project.getCapacity();
         this.status = project.getStatus();
         this.createdAt = project.getCreatedAt();
         this.modifiedAt = project.getModifiedAt();

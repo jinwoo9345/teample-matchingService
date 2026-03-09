@@ -17,6 +17,7 @@ public class ProjectResponseDto {
     private LocalDateTime deadline;
     private Long leaderId;
     private String period;
+    private int capacity;
     private ProjectStatus status;
 
     public ProjectResponseDto(Project project) {
@@ -26,6 +27,7 @@ public class ProjectResponseDto {
         this.deadline = project.getDeadline();
         this.leaderId = project.getLeader().getId();
         this.period = project.getPeriod();
+        this.capacity = project.getCapacity();
         this.status = project.getStatus();
 
     }
