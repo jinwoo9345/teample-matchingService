@@ -29,6 +29,8 @@ public class Project extends BaseTimeEntity {
     @Column(nullable = false)
     private int capacity;
 
+    private int currentMemberCount;
+
     @Enumerated(EnumType.STRING)
     private ProjectStatus status = ProjectStatus.RECRUITING;
 
@@ -41,10 +43,11 @@ public class Project extends BaseTimeEntity {
     private User leader;
 
     @Builder // 빌더 패턴 추가
-    public Project(String title, String content,int capacity, LocalDateTime deadline,String period, User leader) {
+    public Project(String title, String content, int capacity, LocalDateTime deadline, String period, User leader) {
         this.title = title;
         this.content = content;
         this.capacity = capacity;
+        this.currentMemberCount = 1;
         this.deadline = deadline;
         this.period = period;
         this.leader = leader;
@@ -56,5 +59,22 @@ public class Project extends BaseTimeEntity {
         this.period = period;
         this.deadline = deadline;
         this.capacity = capacity;
+    }
+
+    public ProjectMember addMember(User user) {
+        // 1. 검증: 정원이 가득 찼는지 확인
+        validateCapacity();
+
+        // 2. 상태 변경: 현재 참여 인원 증가
+        this.currentMemberCount++;
+
+        // 3. 객체 생성 요청: ProjectMember 공장에 주문
+        return ProjectMember.createMember(this, user);
+    }
+
+    private void validateCapacity() {
+        if (this.currentMemberCount >= this.capacity) {
+            throw new IllegalStateException("정원이 가득 찼습니다.");
+        }
     }
 }

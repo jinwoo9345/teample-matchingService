@@ -3,13 +3,12 @@ package com.teample.matching.user.service;
 
 import com.teample.matching.matching.dto.ApplicationSummaryResponseDto;
 import com.teample.matching.matching.repository.ApplicationRepository;
+import com.teample.matching.matching.service.ApplicationService;
 import com.teample.matching.project.dto.ProjectSummaryResponseDto;
 import com.teample.matching.project.repository.ProjectRepository;
+import com.teample.matching.project.service.ProjectService;
 import com.teample.matching.user.domain.User;
-import com.teample.matching.user.dto.LoginRequestDto;
-import com.teample.matching.user.dto.LoginResponseDto;
-import com.teample.matching.user.dto.SignupRequestDto;
-import com.teample.matching.user.dto.UserMypageResponseDto;
+import com.teample.matching.user.dto.*;
 import com.teample.matching.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,8 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ProjectRepository projectRepository;
-    private final ApplicationRepository applicationRepository;
+    private final ProjectService projectService;
+    private final ApplicationService applicationService;
 
     //1. 회원가입 로직
     @Transactional
@@ -80,16 +79,10 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 유저입니다!"));
 
         // 2. 내가 만든 프로젝트 조회 및 변환
-        List<ProjectSummaryResponseDto> myProjects = projectRepository.findByLeaderId(userId) // 또는 findByLeaderId(userId)
-                .stream()
-                .map(ProjectSummaryResponseDto::new)
-                .toList();
+       List<ProjectSummaryResponseDto> myProjects = projectService.getProjectsByLeader(userId);
 
         // 3. 내가 지원한 내역 조회 및 변환
-        List<ApplicationSummaryResponseDto> appliedProjects = applicationRepository.findAllByUserId(userId)
-                .stream()
-                .map(ApplicationSummaryResponseDto::new)
-                .toList();
+        List<ApplicationSummaryResponseDto> appliedProjects = applicationService.getApplicationByuserId(userId);
 
         // 4. DTO 생성 및 반환
         return UserMypageResponseDto.builder()
@@ -97,6 +90,22 @@ public class UserService {
                 .myProjects(myProjects)
                 .appliedProjects(appliedProjects)
                 .build();
+    }
+
+    //4. 유저 상세보기(타인의 상세보기 기능)
+    public UserProfileResponseDto getUserProfile(Long currentUserId ,Long targetUserId) {
+        User user = userRepository.findById(targetUserId)
+                .orElseThrow(()-> new IllegalArgumentException("해당 유저를 찾을 수 없습니다!!"));
+
+        boolean isMe = targetUserId.equals(currentUserId);
+
+        List<ProjectSummaryResponseDto> projects = projectService.getJoinedProjects(targetUserId);
+
+        return UserProfileResponseDto.builder()
+                .user(user)
+                .projects(projects)
+                .build();
+
     }
 
 }

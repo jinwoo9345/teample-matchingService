@@ -4,6 +4,7 @@ import com.teample.matching.matching.domain.Application;
 import com.teample.matching.matching.domain.ApplicationStatus;
 import com.teample.matching.matching.dto.ApplicationRequestDto;
 import com.teample.matching.matching.dto.ApplicationResponseDto;
+import com.teample.matching.matching.dto.ApplicationSummaryResponseDto;
 import com.teample.matching.matching.repository.ApplicationRepository;
 import com.teample.matching.project.domain.Project;
 import com.teample.matching.project.repository.ProjectRepository;
@@ -126,5 +127,13 @@ public class ApplicationService {
 
         applicationRepository.delete(application);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<ApplicationSummaryResponseDto> getApplicationByuserId(Long userId) {
+        return applicationRepository.findAllByUserId(userId)
+                .stream()
+                .map(ApplicationSummaryResponseDto::new)
+                .toList();
     }
 }

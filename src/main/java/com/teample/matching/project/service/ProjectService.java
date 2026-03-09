@@ -1,10 +1,9 @@
 package com.teample.matching.project.service;
 
 import com.teample.matching.project.domain.Project;
-import com.teample.matching.project.dto.ProjectCreateRequestDto;
-import com.teample.matching.project.dto.ProjectDetailResponseDto;
-import com.teample.matching.project.dto.ProjectResponseDto;
-import com.teample.matching.project.dto.ProjectUpdateRequestDto;
+import com.teample.matching.project.domain.ProjectMember;
+import com.teample.matching.project.dto.*;
+import com.teample.matching.project.repository.ProjectMemberRepository;
 import com.teample.matching.project.repository.ProjectRepository;
 import com.teample.matching.user.domain.User;
 import com.teample.matching.user.repository.UserRepository;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 
 @Service
@@ -22,6 +22,8 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final ProjectMemberRepository projectMemberRepository;
+
     //1. 프로젝트 생성
     @Transactional
     public Long createProject(ProjectCreateRequestDto requestDto) {
@@ -33,6 +35,7 @@ public class ProjectService {
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .deadline(requestDto.getDeadline())
+                .capacity(requestDto.getCapacity())
                 .period(requestDto.getPeriod())
                 .leader(leader)
                 .build();
@@ -72,4 +75,32 @@ public class ProjectService {
 
         projectRepository.delete(project);
     }
+
+    // 유저 아이디가 리더인 프로젝트 찾는 로직
+    @Transactional(readOnly = true)
+    public List<ProjectSummaryResponseDto> getProjectsByLeader(Long leaderId) {
+        return projectRepository.findByLeaderId(leaderId)
+                .stream()
+                .map(ProjectSummaryResponseDto::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectSummaryResponseDto> getJoinedProjects(Long userId) {
+        // 1. 내가 리더인 프로젝트 조회
+        List<Project> leadingProjects = projectRepository.findByLeaderId(userId);
+
+        // 2. 내가 팀원으로 참여 중인 프로젝트 조회 (ProjectMember 거치기)
+        List<Project> memberProjects = projectMemberRepository.findAllByUserId(userId)
+                .stream()
+                .map(ProjectMember::getProject) // ProjectMember 엔티티에서 Project 객체만 추출
+                .toList();
+
+        // 3. 두 리스트 합치기
+        return Stream.concat(leadingProjects.stream(), memberProjects.stream())
+                .distinct() // 리더가 멤버 명단에도 포함되어 있을 경우를 대비
+                .map(ProjectSummaryResponseDto::new)
+                .toList();
+    }
+
 }
