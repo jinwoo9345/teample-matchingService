@@ -2,7 +2,6 @@ package com.teample.matching.project.repository;
 
 import com.teample.matching.project.domain.Project;
 import com.teample.matching.project.domain.ProjectStatus;
-import com.teample.matching.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -20,7 +19,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Page<Project> findByStatus(ProjectStatus status, Pageable pageable);
 
     // 3. 내가 만든 프로젝트 조회
-    List<Project> findByLeader(User leader);
+    List<Project> findByLeaderId(Long leaderid);
 
     // 4. 제목 키워드 검색
     List<Project> findByTitleContaining(String title);
