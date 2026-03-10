@@ -34,21 +34,20 @@ public class UserController {
         return ResponseEntity.ok(responseDto);
     }
 
-    //3, 유저 상세보기 (마이페이지)
-    @GetMapping("/mypage/{id}")
-    public ResponseEntity<UserMypageResponseDto> getMypage(@PathVariable Long id) {
-
-        UserMypageResponseDto mypageResponseDto = userService.getUserMypage(id);
-
+    // 3. 유저 상세보기 (마이페이지)
+    @GetMapping("/mypage/{userId}")
+    public ResponseEntity<UserMypageResponseDto> getMypage(@PathVariable Long userId) {
+        UserMypageResponseDto mypageResponseDto = userService.getUserMypage(userId);
         return ResponseEntity.ok(mypageResponseDto);
     }
 
-    //4. 유저 상세보기
-    @GetMapping("/{currentUserId}")
+    // 4. 유저 상세보기 (타인 프로필)
+    @GetMapping("/{userId}")
     public ResponseEntity<UserProfileResponseDto> getUserProfile(
-            @PathVariable Long currentUserId,
-            @RequestParam Long targetUserId ) {
-        return ResponseEntity.ok(userService.getUserProfile(currentUserId, targetUserId));
+            @PathVariable Long userId, // 조회 대상
+            @RequestParam Long currentUserId // 조회 주체
+    ) {
+        return ResponseEntity.ok(userService.getUserProfile(currentUserId, userId));
     }
 
 }
