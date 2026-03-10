@@ -1,10 +1,7 @@
 package com.teample.matching.user.controller;
 
 
-import com.teample.matching.user.dto.LoginRequestDto;
-import com.teample.matching.user.dto.LoginResponseDto;
-import com.teample.matching.user.dto.SignupRequestDto;
-import com.teample.matching.user.dto.UserMypageResponseDto;
+import com.teample.matching.user.dto.*;
 import com.teample.matching.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +35,20 @@ public class UserController {
     }
 
     //3, 유저 상세보기 (마이페이지)
-    @GetMapping("/mypage/{userId}")
+    @GetMapping("/mypage/{id}")
     public ResponseEntity<UserMypageResponseDto> getMypage(@PathVariable Long userId) {
 
         UserMypageResponseDto mypageResponseDto = userService.getUserMypage(userId);
 
         return ResponseEntity.ok(mypageResponseDto);
+    }
+
+    //4. 유저 상세보기
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileResponseDto> getUserProfile(
+            @PathVariable Long currentUserId,
+            @RequestParam Long targetUserId ) {
+        return ResponseEntity.ok(userService.getUserProfile(currentUserId, targetUserId));
     }
 
 }

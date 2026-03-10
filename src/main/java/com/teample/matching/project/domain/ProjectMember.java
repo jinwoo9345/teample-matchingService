@@ -8,8 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor
@@ -18,6 +16,8 @@ public class ProjectMember extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String role;
 
     private int contribution;
 
@@ -28,6 +28,8 @@ public class ProjectMember extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+
+
 
     @Builder
     public ProjectMember( User user, Project project) {
