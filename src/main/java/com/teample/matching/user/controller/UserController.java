@@ -36,15 +36,15 @@ public class UserController {
 
     //3, 유저 상세보기 (마이페이지)
     @GetMapping("/mypage/{id}")
-    public ResponseEntity<UserMypageResponseDto> getMypage(@PathVariable Long userId) {
+    public ResponseEntity<UserMypageResponseDto> getMypage(@PathVariable Long id) {
 
-        UserMypageResponseDto mypageResponseDto = userService.getUserMypage(userId);
+        UserMypageResponseDto mypageResponseDto = userService.getUserMypage(id);
 
         return ResponseEntity.ok(mypageResponseDto);
     }
 
     //4. 유저 상세보기
-    @GetMapping("/{id}")
+    @GetMapping("/{currentUserId}")
     public ResponseEntity<UserProfileResponseDto> getUserProfile(
             @PathVariable Long currentUserId,
             @RequestParam Long targetUserId ) {
