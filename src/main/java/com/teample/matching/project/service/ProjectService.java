@@ -1,9 +1,7 @@
 package com.teample.matching.project.service;
 
 import com.teample.matching.project.domain.Project;
-import com.teample.matching.project.domain.ProjectMember;
 import com.teample.matching.project.dto.*;
-import com.teample.matching.project.repository.ProjectMemberRepository;
 import com.teample.matching.project.repository.ProjectRepository;
 import com.teample.matching.user.domain.User;
 import com.teample.matching.user.repository.UserRepository;
@@ -22,14 +20,13 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final ProjectMemberRepository projectMemberRepository;
+    private final ProjectMemberService projectMemberService;
 
-    //1. 프로젝트 생성
+    // 1. 프로젝트 생성
     @Transactional
     public Long createProject(ProjectCreateRequestDto requestDto) {
-
         User leader = userRepository.findById(requestDto.getLeaderId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다. ID: " + requestDto.getLeaderId()));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자"));
 
         Project project = Project.builder()
                 .title(requestDto.getTitle())
@@ -40,7 +37,12 @@ public class ProjectService {
                 .leader(leader)
                 .build();
 
-        return projectRepository.save(project).getId();
+        Project savedProject = projectRepository.save(project);
+
+        // [중요] 프로젝트 생성 시 리더를 멤버 테이블에도 등록!
+        projectMemberService.addMember(savedProject, leader);
+
+        return savedProject.getId();
     }
 
     //2. 프로젝트 조회
@@ -85,20 +87,15 @@ public class ProjectService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     public List<ProjectSummaryResponseDto> getJoinedProjects(Long userId) {
-        // 1. 내가 리더인 프로젝트 조회
+        // 내가 리더인 프로젝트
         List<Project> leadingProjects = projectRepository.findByLeaderId(userId);
 
-        // 2. 내가 팀원으로 참여 중인 프로젝트 조회 (ProjectMember 거치기)
-        List<Project> memberProjects = projectMemberRepository.findAllByUserId(userId)
-                .stream()
-                .map(ProjectMember::getProject) // ProjectMember 엔티티에서 Project 객체만 추출
-                .toList();
+        // 내가 팀원으로 참여 중인 프로젝트
+        List<Project> memberProjects = projectMemberService.findProjectsByUserId(userId);
 
-        // 3. 두 리스트 합치기
         return Stream.concat(leadingProjects.stream(), memberProjects.stream())
-                .distinct() // 리더가 멤버 명단에도 포함되어 있을 경우를 대비
+                .distinct()
                 .map(ProjectSummaryResponseDto::new)
                 .toList();
     }

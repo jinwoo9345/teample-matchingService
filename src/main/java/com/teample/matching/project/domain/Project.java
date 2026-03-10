@@ -47,7 +47,7 @@ public class Project extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.capacity = capacity;
-        this.currentMemberCount = 1;
+        this.currentMemberCount = 0;
         this.deadline = deadline;
         this.period = period;
         this.leader = leader;
@@ -61,20 +61,22 @@ public class Project extends BaseTimeEntity {
         this.capacity = capacity;
     }
 
-    public ProjectMember addMember(User user) {
+    public void joinMember() {
         // 1. 검증: 정원이 가득 찼는지 확인
         validateCapacity();
-
         // 2. 상태 변경: 현재 참여 인원 증가
         this.currentMemberCount++;
 
-        // 3. 객체 생성 요청: ProjectMember 공장에 주문
-        return ProjectMember.createMember(this, user);
     }
 
     private void validateCapacity() {
         if (this.currentMemberCount >= this.capacity) {
             throw new IllegalStateException("정원이 가득 찼습니다.");
+        }
+    }
+    public void validateLeader(Long userId) {
+        if (!this.leader.getId().equals(userId)) {
+            throw new IllegalArgumentException("리더 권한이 없습니다.");
         }
     }
 }

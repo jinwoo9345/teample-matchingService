@@ -36,12 +36,15 @@ public class ProjectMember extends BaseTimeEntity {
         this.contribution = 0;
         this.user = user;
         this.project = project;
+
     }
 
     public static ProjectMember createMember(Project project, User user) {
-        return ProjectMember.builder()
+        ProjectMember member = ProjectMember.builder()
                 .project(project)
                 .user(user)
                 .build();
+        member.role = "MEMBER";
+        return member;
     }
 }

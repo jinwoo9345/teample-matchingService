@@ -51,7 +51,7 @@ public class ApplicationController {
     }
 
     // 5. 프로젝트 지원취소
-    @DeleteMapping
+    @DeleteMapping("/{applicationId}")
     public ResponseEntity<Void> deleteApplication(
             @PathVariable Long applicationId,
             @RequestParam Long userId) {
