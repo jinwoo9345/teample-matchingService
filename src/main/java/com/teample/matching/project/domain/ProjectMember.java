@@ -29,20 +29,24 @@ public class ProjectMember extends BaseTimeEntity {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Enumerated(EnumType.STRING)
+    private ProjectRole projectRole;
 
 
     @Builder
-    public ProjectMember( User user, Project project) {
+    public ProjectMember( User user, Project project, ProjectRole projectRole) {
         this.contribution = 0;
         this.user = user;
         this.project = project;
+        this.projectRole = projectRole;
 
     }
 
-    public static ProjectMember createMember(Project project, User user) {
+    public static ProjectMember createMember(Project project, User user, ProjectRole projectRole) {
         ProjectMember member = ProjectMember.builder()
                 .project(project)
                 .user(user)
+                .projectRole(projectRole)
                 .build();
         member.role = "MEMBER";
         return member;

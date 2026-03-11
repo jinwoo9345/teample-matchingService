@@ -53,6 +53,7 @@ public class ApplicationService {
         Application application = Application.builder()
                 .user(user)
                 .project(project)
+                .applyRole(requestDto.getProjectRole())
                 .introduction(requestDto.getIntroduction())
                 .build();
 
@@ -93,7 +94,7 @@ public class ApplicationService {
         //승인
         application.accept();
         // 승인된 멤버 추가
-        projectMemberService.addMember(project, user);
+        projectMemberService.addMember(project, user,application.getApplyRole());
 
     }
 

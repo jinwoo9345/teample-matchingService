@@ -2,6 +2,7 @@ package com.teample.matching.project.domain;
 
 
 import com.teample.matching.common.BaseTimeEntity;
+import com.teample.matching.common.domain.Tag;
 import com.teample.matching.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +30,9 @@ public class Project extends BaseTimeEntity {
     private String content;
 
     @Column(nullable = false)
+    private String memberRole;
+
+    @Column(nullable = false)
     private int capacity;
 
     private int currentMemberCount;
@@ -42,10 +48,18 @@ public class Project extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User leader;
 
+
+    // ProjectTag 리스트 추가
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectTag> projectTags = new ArrayList<>();
+
+
+
     @Builder // 빌더 패턴 추가
-    public Project(String title, String content, int capacity, LocalDateTime deadline, String period, User leader) {
+    public Project(String title, String content, String memberRole ,int capacity, LocalDateTime deadline, String period, User leader) {
         this.title = title;
         this.content = content;
+        this.memberRole = memberRole;
         this.capacity = capacity;
         this.currentMemberCount = 0;
         this.deadline = deadline;
@@ -78,5 +92,14 @@ public class Project extends BaseTimeEntity {
         if (!this.leader.getId().equals(userId)) {
             throw new IllegalArgumentException("리더 권한이 없습니다.");
         }
+    }
+
+    public void addTag(Tag tag) {
+        ProjectTag projectTag = ProjectTag.builder()
+                .project(this)
+                .tag(tag)
+                .build();
+
+        this.projectTags.add(projectTag);
     }
 }

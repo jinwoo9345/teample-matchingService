@@ -1,6 +1,7 @@
 package com.teample.matching.matching.domain;
 
 import com.teample.matching.project.domain.Project;
+import com.teample.matching.project.domain.ProjectRole;
 import com.teample.matching.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -31,12 +32,17 @@ public class Application {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Enumerated(EnumType.STRING)
+    private ProjectRole applyRole;
+
+
     @Builder
-    public Application(User user, Project project, String introduction) {
+    public Application(User user, Project project, String introduction,ProjectRole applyRole) {
         this.user = user;
         this.project = project;
         this.introduction = introduction;
         this.status = ApplicationStatus.PENDING;
+        this.applyRole = applyRole;
     }
 
     // 승인 메소드

@@ -17,6 +17,9 @@ public class ProjectCreateRequestDto {
     @NotBlank(message = "프로젝트 내용은 필수입니다.")
     private String content;
 
+    @NotBlank(message = "프로젝트에 필요한 멤버를 적어주세요.")
+    private String memberRole;
+
     @NotNull(message = "모집 마감 기한을 설정해주세요.")
     private LocalDateTime deadline;
 

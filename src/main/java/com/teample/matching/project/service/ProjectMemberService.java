@@ -3,6 +3,7 @@ package com.teample.matching.project.service;
 
 import com.teample.matching.project.domain.Project;
 import com.teample.matching.project.domain.ProjectMember;
+import com.teample.matching.project.domain.ProjectRole;
 import com.teample.matching.project.repository.ProjectMemberRepository;
 import com.teample.matching.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,9 @@ public class ProjectMemberService {
 
     // 멤버 추가 (리더/팀원 공통)
     @Transactional
-    public void addMember(Project project, User user) {
+    public void addMember(Project project, User user , ProjectRole projectRole) {
         project.joinMember();
-        ProjectMember member = ProjectMember.createMember(project, user);
+        ProjectMember member = ProjectMember.createMember(project, user,projectRole);
         projectMemberRepository.save(member);
     }
 

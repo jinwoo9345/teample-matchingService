@@ -1,6 +1,7 @@
 package com.teample.matching.project.service;
 
 import com.teample.matching.project.domain.Project;
+import com.teample.matching.project.domain.ProjectRole;
 import com.teample.matching.project.dto.*;
 import com.teample.matching.project.repository.ProjectRepository;
 import com.teample.matching.user.domain.User;
@@ -31,6 +32,7 @@ public class ProjectService {
         Project project = Project.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .memberRole(requestDto.getMemberRole())
                 .deadline(requestDto.getDeadline())
                 .capacity(requestDto.getCapacity())
                 .period(requestDto.getPeriod())
@@ -40,7 +42,7 @@ public class ProjectService {
         Project savedProject = projectRepository.save(project);
 
         // [중요] 프로젝트 생성 시 리더를 멤버 테이블에도 등록!
-        projectMemberService.addMember(savedProject, leader);
+        projectMemberService.addMember(savedProject, leader , ProjectRole.LEADER);
 
         return savedProject.getId();
     }
