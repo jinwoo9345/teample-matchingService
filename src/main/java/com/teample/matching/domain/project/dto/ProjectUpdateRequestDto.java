@@ -1,0 +1,18 @@
+package com.teample.matching.domain.project.dto;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Getter
+@NoArgsConstructor
+public class ProjectUpdateRequestDto {
+
+    private String title;
+    private String content;
+    private int capacity;
+    private String period;
+    private LocalDateTime deadline;
+
+}
