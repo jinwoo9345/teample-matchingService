@@ -6,7 +6,7 @@ import com.teample.matching.domain.project.dto.*;
 import com.teample.matching.domain.project.repository.ProjectRepository;
 import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.domain.user.repository.UserRepository;
-import com.teample.matching.global.exception.NotFoundException;
+import com.teample.matching.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

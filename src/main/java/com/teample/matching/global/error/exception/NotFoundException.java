@@ -1,4 +1,4 @@
-package com.teample.matching.global.exception;
+package com.teample.matching.global.error.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

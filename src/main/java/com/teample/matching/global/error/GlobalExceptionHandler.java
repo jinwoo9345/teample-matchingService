@@ -1,6 +1,9 @@
-package com.teample.matching.global.exception;
+package com.teample.matching.global.error;
 
 import com.teample.matching.global.common.response.ApiResponse;
+import com.teample.matching.global.error.exception.BadRequestException;
+import com.teample.matching.global.error.exception.ForbiddenException;
+import com.teample.matching.global.error.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

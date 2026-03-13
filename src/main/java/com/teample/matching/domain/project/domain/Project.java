@@ -2,9 +2,9 @@ package com.teample.matching.domain.project.domain;
 
 
 import com.teample.matching.domain.user.domain.User;
-import com.teample.matching.global.BaseTimeEntity;
-import com.teample.matching.global.domain.Tag;
-import com.teample.matching.global.exception.ForbiddenException;
+import com.teample.matching.global.common.entity.BaseTimeEntity;
+import com.teample.matching.domain.tag.domain.Tag;
+import com.teample.matching.global.error.exception.ForbiddenException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

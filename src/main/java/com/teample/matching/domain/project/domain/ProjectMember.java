@@ -1,7 +1,7 @@
 package com.teample.matching.domain.project.domain;
 
 
-import com.teample.matching.global.BaseTimeEntity;
+import com.teample.matching.global.common.entity.BaseTimeEntity;
 import com.teample.matching.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;

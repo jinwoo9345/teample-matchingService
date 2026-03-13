@@ -1,4 +1,4 @@
-package com.teample.matching.global.domain;
+package com.teample.matching.domain.tag.domain;
 
 
 import jakarta.persistence.*;

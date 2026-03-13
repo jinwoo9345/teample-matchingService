@@ -1,6 +1,6 @@
 package com.teample.matching.domain.project.domain;
 
-import com.teample.matching.global.domain.Tag;
+import com.teample.matching.domain.tag.domain.Tag;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

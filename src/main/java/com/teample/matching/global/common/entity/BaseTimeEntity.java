@@ -1,4 +1,4 @@
-package com.teample.matching.global;
+package com.teample.matching.global.common.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
