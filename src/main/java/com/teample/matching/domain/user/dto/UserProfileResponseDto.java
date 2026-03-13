@@ -17,18 +17,20 @@ public class UserProfileResponseDto {
     private String nickName;
     private String introduction;
     private int temperature;
+    private boolean isMe;
     private List<ProjectSummaryResponseDto> projects;
     //private Tier tier;
     //private UserTag userTag;
 
 
     @Builder
-    public UserProfileResponseDto(User user,List<ProjectSummaryResponseDto> projects) {
+    public UserProfileResponseDto(User user,List<ProjectSummaryResponseDto> projects,boolean isMe) {
         this.email = user.getEmail();
         this.nickName = user.getNickName();
         this.introduction = user.getIntroduction();
         this.temperature = user.getTemperature();
         this.projects = projects;
+        this.isMe = isMe;
     }
 
 }

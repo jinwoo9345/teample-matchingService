@@ -8,6 +8,8 @@ import com.teample.matching.domain.project.service.ProjectService;
 import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.domain.user.dto.*;
 import com.teample.matching.domain.user.repository.UserRepository;
+import com.teample.matching.global.exception.BadRequestException;
+import com.teample.matching.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +47,7 @@ public class UserService {
 
     private void validateDuplicateEmail(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalStateException("이미 가입된 이메일입니다.");
+            throw new BadRequestException("이미 가입된 이메일입니다.");
         }
     }
 
@@ -54,11 +56,11 @@ public class UserService {
 
         // 1. 유저 찾기 (없으면 에러 던지기)
         User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호를 다시 확인해주세요!"));
+                .orElseThrow(() -> new BadRequestException("이메일 또는 비밀번호를 다시 확인해주세요!"));
 
         // 2. 비밀번호 체크
         if (!user.getPassword().equals(requestDto.getPassword())) {
-            throw new IllegalArgumentException("이메일 또는 비밀번호를 다시 확인해주세요!");
+            throw new BadRequestException("이메일 또는 비밀번호를 다시 확인해주세요!");
         }
 
         // 3. 응답 DTO 조립
@@ -70,11 +72,11 @@ public class UserService {
     }
 
     // 3. 유저 상세보기 (마이페이지)
-    public UserMypageResponseDto getUserMypage(Long userId) { // camelCase 권장: userid -> userId
+    public UserMypageResponseDto getUserMypage(Long userId) {
 
         // 1. 유저 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 유저입니다!"));
+                .orElseThrow(() -> new NotFoundException("찾을 수 없는 유저입니다!"));
 
         // 2. 내가 만든 프로젝트 조회 및 변환
        List<ProjectSummaryResponseDto> myProjects = projectService.getProjectsByLeader(userId);
@@ -93,17 +95,16 @@ public class UserService {
     //4. 유저 상세보기(타인의 상세보기 기능)
     public UserProfileResponseDto getUserProfile(Long currentUserId , Long targetUserId) {
         User user = userRepository.findById(targetUserId)
-                .orElseThrow(()-> new IllegalArgumentException("해당 유저를 찾을 수 없습니다!!"));
+                .orElseThrow(()-> new NotFoundException("해당 유저를 찾을 수 없습니다!!"));
 
         boolean isMe = targetUserId.equals(currentUserId);
-
         List<ProjectSummaryResponseDto> projects = projectService.getJoinedProjects(targetUserId);
 
         return UserProfileResponseDto.builder()
                 .user(user)
                 .projects(projects)
+                .isMe(isMe)
                 .build();
-
     }
 
 }

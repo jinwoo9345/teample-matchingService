@@ -10,6 +10,9 @@ import com.teample.matching.domain.project.repository.ProjectRepository;
 import com.teample.matching.domain.project.service.ProjectMemberService;
 import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.domain.user.repository.UserRepository;
+import com.teample.matching.global.exception.BadRequestException;
+import com.teample.matching.global.exception.ForbiddenException;
+import com.teample.matching.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,21 +35,21 @@ public class ApplicationService {
     public Long applyProject(ApplicationRequestDto requestDto) {
 
         User user = userRepository.findById(requestDto.getUserId()).
-                orElseThrow(()-> new IllegalStateException("유저가 존재하지 않습니다!"));
+                orElseThrow(()-> new NotFoundException("유저가 존재하지 않습니다!"));
 
         Project project =  projectRepository.findById(requestDto.getProjectId())
-                .orElseThrow(()->new IllegalArgumentException("프로젝트가 존재하지 않습니다!"));
+                .orElseThrow(()->new NotFoundException("프로젝트가 존재하지 않습니다!"));
 
         if(requestDto.getUserId().equals(project.getLeader().getId())) {
-            throw new IllegalArgumentException("리더는 본인의 프로젝트에 지원할 수 없습니다!");
+            throw new BadRequestException("리더는 본인의 프로젝트에 지원할 수 없습니다!");
         }
 
         if(applicationRepository.existsByProjectIdAndUserId(requestDto.getProjectId(), requestDto.getUserId())) {
-           throw new IllegalArgumentException("이미 지원한 프로젝트입니다!!");
+           throw new BadRequestException("이미 지원한 프로젝트입니다!!");
         }
 
         if (project.getCurrentMemberCount() >= project.getCapacity()) {
-            throw new IllegalArgumentException("이미 정원이 다 찬 프로젝트입니다!!");
+            throw new BadRequestException("이미 정원이 다 찬 프로젝트입니다!!");
         }
 
         //이제 빌더로 생성
@@ -65,7 +68,7 @@ public class ApplicationService {
     //2. 프로젝트 리더가 지원자 현황 확인
     public List<ApplicationResponseDto> findAllApplication(Long projectId,Long currentUserId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 프로젝트입니다!!"));
+                .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트입니다!!"));
 
 
         project.validateLeader(currentUserId);
@@ -81,7 +84,7 @@ public class ApplicationService {
     @Transactional
     public void acceptApplication(Long applicationId, Long currentUserId) {
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(()->new IllegalArgumentException("지원서를 찾을 수 없습니다!!"));
+                .orElseThrow(()->new NotFoundException("지원서를 찾을 수 없습니다!!"));
 
 
 
@@ -102,7 +105,7 @@ public class ApplicationService {
     @Transactional
     public void rejectApplication(Long applicationId, Long currentUserId) {
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(()->new IllegalArgumentException("지원서를 찾을 수 없습니다!!"));
+                .orElseThrow(()->new NotFoundException("지원서를 찾을 수 없습니다!!"));
 
         //리더 권한 확인
         Project project = application.getProject();
@@ -117,10 +120,10 @@ public class ApplicationService {
     public void cancelApplication(Long applicationId, Long currentUserId) {
 
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(()-> new IllegalArgumentException("지원서를 찾을 수 없습니다!"));
+                .orElseThrow(()-> new NotFoundException("지원서를 찾을 수 없습니다!"));
 
         if(!application.getUser().getId().equals(currentUserId)) {
-            throw new IllegalArgumentException("지원자 본인만 취소 가능합니다!");
+            throw new ForbiddenException("지원자 본인만 취소 가능합니다!");
         }
 
         applicationRepository.delete(application);

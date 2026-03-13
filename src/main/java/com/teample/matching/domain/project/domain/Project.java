@@ -1,9 +1,10 @@
 package com.teample.matching.domain.project.domain;
 
 
+import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.global.BaseTimeEntity;
 import com.teample.matching.global.domain.Tag;
-import com.teample.matching.domain.user.domain.User;
+import com.teample.matching.global.exception.ForbiddenException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -85,12 +86,12 @@ public class Project extends BaseTimeEntity {
 
     private void validateCapacity() {
         if (this.currentMemberCount >= this.capacity) {
-            throw new IllegalStateException("정원이 가득 찼습니다.");
+            throw new ForbiddenException("정원이 가득 찼습니다.");
         }
     }
     public void validateLeader(Long userId) {
         if (!this.leader.getId().equals(userId)) {
-            throw new IllegalArgumentException("리더 권한이 없습니다.");
+            throw new ForbiddenException("리더 권한이 없습니다.");
         }
     }
 
