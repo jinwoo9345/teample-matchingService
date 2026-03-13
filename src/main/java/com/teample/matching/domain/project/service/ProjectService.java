@@ -6,6 +6,7 @@ import com.teample.matching.domain.project.dto.*;
 import com.teample.matching.domain.project.repository.ProjectRepository;
 import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.domain.user.repository.UserRepository;
+import com.teample.matching.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class ProjectService {
     @Transactional
     public Long createProject(ProjectCreateRequestDto requestDto) {
         User leader = userRepository.findById(requestDto.getLeaderId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자"));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다!"));
 
         Project project = Project.builder()
                 .title(requestDto.getTitle())
@@ -59,7 +60,7 @@ public class ProjectService {
     public ProjectDetailResponseDto findProjectById(Long id) {
 
         Project project = projectRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 프로젝트 입니다!"));
+                .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트 입니다!"));
         return new ProjectDetailResponseDto(project);
     }
 
@@ -67,7 +68,7 @@ public class ProjectService {
     @Transactional
     public void updateProject(Long id, ProjectUpdateRequestDto requestDto) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 프로젝트입니다!"));
+                .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트입니다!"));
 
         project.update(requestDto.getTitle(),requestDto.getContent(),requestDto.getCapacity(),requestDto.getPeriod(),requestDto.getDeadline());
     }
@@ -75,7 +76,7 @@ public class ProjectService {
     @Transactional
     public void deleteProject(Long id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 프로젝트입니다!"));
+                .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트입니다!"));
 
         projectRepository.delete(project);
     }
