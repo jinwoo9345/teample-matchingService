@@ -77,18 +77,35 @@ public class Project extends BaseTimeEntity {
     }
 
     public void joinMember() {
-        // 1. 검증: 정원이 가득 찼는지 확인
-        validateCapacity();
+        // 1. 검증: 참가 가능한지 확인
+        validateForApply();
+
         // 2. 상태 변경: 현재 참여 인원 증가
         this.currentMemberCount++;
 
-    }
-
-    private void validateCapacity() {
-        if (this.currentMemberCount >= this.capacity) {
-            throw new ForbiddenException("정원이 가득 찼습니다.");
+        // 3. 참여후 인원 재확인
+        if (isFull()) {
+            changeStatusToComplete();
         }
     }
+
+    public void validateForApply() {
+        if (this.status != ProjectStatus.RECRUITING) {
+            throw new ForbiddenException("현재 모집 중인 프로젝트가 아닙니다.");
+        }
+        if (isFull()) {
+            throw new ForbiddenException("이미 정원이 가득 찼습니다.");
+        }
+    }
+
+    private boolean isFull() {
+        return this.currentMemberCount >= this.capacity;
+    }
+
+    private void changeStatusToComplete() {
+        this.status = ProjectStatus.COMPLETE;
+    }
+
     public void validateLeader(Long userId) {
         if (!this.leader.getId().equals(userId)) {
             throw new ForbiddenException("리더 권한이 없습니다.");

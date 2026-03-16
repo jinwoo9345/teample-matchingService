@@ -44,15 +44,14 @@ public class ApplicationService {
             throw new BadRequestException("리더는 본인의 프로젝트에 지원할 수 없습니다!");
         }
 
+        // 지원가능 상태체크
+        project.validateForApply();
+
         if(applicationRepository.existsByProjectIdAndUserId(requestDto.getProjectId(), user.getId())) {
            throw new BadRequestException("이미 지원한 프로젝트입니다!!");
         }
 
-        if (project.getCurrentMemberCount() >= project.getCapacity()) {
-            throw new BadRequestException("이미 정원이 다 찬 프로젝트입니다!!");
-        }
-
-        //이제 빌더로 생성
+        //빌더로 생성
         Application application = Application.builder()
                 .user(user)
                 .project(project)
@@ -86,18 +85,17 @@ public class ApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(()->new NotFoundException("지원서를 찾을 수 없습니다!!"));
 
-
-
         Project project = application.getProject();
         User user = application.getUser();
 
         //리더 권한확인
         project.validateLeader(currentUserId);
 
-        //승인
-        application.accept();
-        // 승인된 멤버 추가
+        // 프로젝트 상태 검증 및 멤버 추가
         projectMemberService.addMember(project, user,application.getApplyRole());
+
+        // 지원서 상태  승인 변경
+        application.accept();
 
     }
 
