@@ -36,7 +36,7 @@ public class UserController {
     }
 
     // 3. 유저 상세보기 (마이페이지)
-    @GetMapping("/mypage/{userId}")
+    @GetMapping("/mypage")
     public ResponseEntity< ApiResponse<UserMypageResponseDto>> getMypage(@AuthenticationPrincipal Long userId) {
         UserMypageResponseDto mypageResponseDto = userService.getUserMypage(userId);
         return ResponseEntity.ok(ApiResponse.success("마이페이지 조회 성공!",mypageResponseDto));
