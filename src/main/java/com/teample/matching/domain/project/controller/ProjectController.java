@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +24,12 @@ public class ProjectController {
 
     // 1. 프로젝트 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> createProject(@Valid @RequestBody ProjectCreateRequestDto requestDto) {
-        Long projectId = projectService.createProject(requestDto);
+    public ResponseEntity<ApiResponse<Long>> createProject(
+            @Valid @RequestBody ProjectCreateRequestDto requestDto,
+            @AuthenticationPrincipal Long userId
+    ) {
+        // 이제 서비스에 userId를 함께 넘겨줍니다.
+        Long projectId = projectService.createProject(requestDto, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("프로젝트 생성 성공", projectId));
     }
@@ -39,22 +44,30 @@ public class ProjectController {
 
     // 3. 프로젝트 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProjectDetailResponseDto>> findProjectById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ProjectDetailResponseDto>> findProjectById( Long id) {
         ProjectDetailResponseDto responseDto = projectService.findProjectById(id);
         return ResponseEntity.ok(ApiResponse.success("프로젝트 상세 조회 성공", responseDto));
     }
 
     // 4. 프로젝트 수정
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Long>> updateProject(@RequestBody ProjectUpdateRequestDto requestDto, @PathVariable Long id) {
-        projectService.updateProject(id, requestDto);
+    public ResponseEntity<ApiResponse<Long>> updateProject(
+            @PathVariable Long id,
+            @RequestBody ProjectUpdateRequestDto requestDto,
+            @AuthenticationPrincipal Long userId // ✨ 수정을 시도하는 유저 ID
+    ) {
+        // 본인 확인을 위해 userId를 넘깁니다.
+        projectService.updateProject(id, requestDto, userId);
         return ResponseEntity.ok(ApiResponse.success("프로젝트 수정 성공", id));
     }
 
     // 5. 프로젝트 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteProject(@PathVariable Long id) {
-        projectService.deleteProject(id);
+    public ResponseEntity<ApiResponse<Void>> deleteProject(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Long userId // ✨ 삭제를 시도하는 유저 ID
+    ) {
+        projectService.deleteProject(id, userId);
         return ResponseEntity.ok(ApiResponse.success("프로젝트 삭제 성공", null));
     }
 

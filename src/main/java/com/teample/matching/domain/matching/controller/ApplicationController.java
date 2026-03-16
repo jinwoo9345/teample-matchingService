@@ -7,6 +7,7 @@ import com.teample.matching.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class ApplicationController {
 
     //1. 프로젝트 지원
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> applyProject(@RequestBody ApplicationRequestDto requestDto) {
-        Long applicationId = applicationService.applyProject(requestDto);
+    public ResponseEntity<ApiResponse<Long>> applyProject(@RequestBody ApplicationRequestDto requestDto,@AuthenticationPrincipal Long currentUserId) {
+        Long applicationId = applicationService.applyProject(requestDto,currentUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("프로젝트 지원 성공",applicationId));
     }
 
@@ -29,7 +30,7 @@ public class ApplicationController {
     @GetMapping("/projects/{projectId}")
     public ResponseEntity<ApiResponse<List<ApplicationResponseDto>>> getApplications(
             @PathVariable Long projectId,
-            @RequestParam Long userId) {
+            @AuthenticationPrincipal Long userId) {
 
         return ResponseEntity.ok(ApiResponse.success("지원자 조회 성공",applicationService.findAllApplication(projectId, userId)) );
     }
@@ -37,7 +38,7 @@ public class ApplicationController {
     @PatchMapping("/{applicationId}/accept")
     public ResponseEntity<ApiResponse<Void>> acceptApplication(
             @PathVariable Long applicationId,
-            @RequestParam Long userId) {
+            @AuthenticationPrincipal Long userId) {
 
         applicationService.acceptApplication(applicationId, userId);
         return ResponseEntity.ok(ApiResponse.success("지원자 승인 성공", null));
@@ -47,7 +48,7 @@ public class ApplicationController {
     @PatchMapping("/{applicationId}/reject")
     public ResponseEntity<ApiResponse<Void>> rejectApplication(
             @PathVariable Long applicationId,
-            @RequestParam Long userId) {
+            @AuthenticationPrincipal Long userId) {
 
         applicationService.rejectApplication(applicationId, userId);
         return ResponseEntity.ok(ApiResponse.success("지원자 거절 성공", null));
@@ -57,7 +58,7 @@ public class ApplicationController {
     @DeleteMapping("/{applicationId}")
     public ResponseEntity<ApiResponse<Void>> deleteApplication(
             @PathVariable Long applicationId,
-            @RequestParam Long userId) {
+            @AuthenticationPrincipal Long userId) {
 
         applicationService.cancelApplication(applicationId, userId);
         return ResponseEntity.ok(ApiResponse.success("지원 취소 성공", null));

@@ -10,6 +10,7 @@ import com.teample.matching.domain.user.dto.*;
 import com.teample.matching.domain.user.repository.UserRepository;
 import com.teample.matching.global.error.exception.BadRequestException;
 import com.teample.matching.global.error.exception.NotFoundException;
+import com.teample.matching.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProjectService projectService;
     private final ApplicationService applicationService;
+    private final JwtTokenProvider jwtTokenProvider; // 토큰 생성기
 
     //1. 회원가입 로직
     @Transactional
@@ -65,7 +67,7 @@ public class UserService {
 
         // 3. 응답 DTO 조립
         return LoginResponseDto.builder()
-                .token("fake-token1234")
+                .token(jwtTokenProvider.createToken(user.getId()))
                 .message("로그인 성공!!")
                 .nickname(user.getNickName())
                 .build();

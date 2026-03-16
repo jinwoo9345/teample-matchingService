@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApplicationRequestDto {
 
-    private Long userId;    // User 객체 대신 ID만!
+    
     private Long projectId; // Project 객체 대신 ID만!
     private ProjectRole projectRole;
 

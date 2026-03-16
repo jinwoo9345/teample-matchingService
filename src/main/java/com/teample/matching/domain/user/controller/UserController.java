@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,7 +37,7 @@ public class UserController {
 
     // 3. 유저 상세보기 (마이페이지)
     @GetMapping("/mypage/{userId}")
-    public ResponseEntity< ApiResponse<UserMypageResponseDto>> getMypage(@PathVariable Long userId) {
+    public ResponseEntity< ApiResponse<UserMypageResponseDto>> getMypage(@AuthenticationPrincipal Long userId) {
         UserMypageResponseDto mypageResponseDto = userService.getUserMypage(userId);
         return ResponseEntity.ok(ApiResponse.success("마이페이지 조회 성공!",mypageResponseDto));
     }
@@ -45,7 +46,7 @@ public class UserController {
     // UserController.java 4번 메소드 수정
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserProfileResponseDto>> getUserProfile(
-            @RequestParam Long currentUserId, // 조회 주체 (current)
+            @AuthenticationPrincipal Long currentUserId, // 조회 주체 (current)
             @PathVariable Long userId// 조회 대상 (target)
     ) {
         UserProfileResponseDto userProfileResponseDto = userService.getUserProfile(currentUserId, userId);

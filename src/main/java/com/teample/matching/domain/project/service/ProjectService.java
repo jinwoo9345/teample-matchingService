@@ -6,6 +6,7 @@ import com.teample.matching.domain.project.dto.*;
 import com.teample.matching.domain.project.repository.ProjectRepository;
 import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.domain.user.repository.UserRepository;
+import com.teample.matching.global.error.exception.BadRequestException;
 import com.teample.matching.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,8 @@ public class ProjectService {
 
     // 1. 프로젝트 생성
     @Transactional
-    public Long createProject(ProjectCreateRequestDto requestDto) {
-        User leader = userRepository.findById(requestDto.getLeaderId())
+    public Long createProject(ProjectCreateRequestDto requestDto, Long userId) {
+        User leader = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다!"));
 
         Project project = Project.builder()
@@ -66,18 +67,24 @@ public class ProjectService {
 
     // 4. 프로젝트 업데이트
     @Transactional
-    public void updateProject(Long id, ProjectUpdateRequestDto requestDto) {
+    public void updateProject(Long id, ProjectUpdateRequestDto requestDto,Long userId) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트입니다!"));
+
+        if(!project.getLeader().getId().equals(userId)) {
+            throw new BadRequestException("수정 권한이 없습니다!");
+        }
 
         project.update(requestDto.getTitle(),requestDto.getContent(),requestDto.getCapacity(),requestDto.getPeriod(),requestDto.getDeadline());
     }
 
     @Transactional
-    public void deleteProject(Long id) {
+    public void deleteProject(Long id, Long userId) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트입니다!"));
-
+        if(!project.getLeader().getId().equals(userId)) {
+            throw new BadRequestException("삭제 권한이 없습니다!");
+        }
         projectRepository.delete(project);
     }
 

@@ -32,19 +32,19 @@ public class ApplicationService {
 
     //1. 프로젝트에 지원하기
     @Transactional
-    public Long applyProject(ApplicationRequestDto requestDto) {
+    public Long applyProject(ApplicationRequestDto requestDto, Long currentUserId) {
 
-        User user = userRepository.findById(requestDto.getUserId()).
+        User user = userRepository.findById(currentUserId).
                 orElseThrow(()-> new NotFoundException("유저가 존재하지 않습니다!"));
 
         Project project =  projectRepository.findById(requestDto.getProjectId())
                 .orElseThrow(()->new NotFoundException("프로젝트가 존재하지 않습니다!"));
 
-        if(requestDto.getUserId().equals(project.getLeader().getId())) {
+        if(user.getId().equals(project.getLeader().getId())) {
             throw new BadRequestException("리더는 본인의 프로젝트에 지원할 수 없습니다!");
         }
 
-        if(applicationRepository.existsByProjectIdAndUserId(requestDto.getProjectId(), requestDto.getUserId())) {
+        if(applicationRepository.existsByProjectIdAndUserId(requestDto.getProjectId(), user.getId())) {
            throw new BadRequestException("이미 지원한 프로젝트입니다!!");
         }
 
