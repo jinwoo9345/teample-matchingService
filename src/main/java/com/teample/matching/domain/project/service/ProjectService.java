@@ -78,6 +78,7 @@ public class ProjectService {
         project.update(requestDto.getTitle(),requestDto.getContent(),requestDto.getCapacity(),requestDto.getPeriod(),requestDto.getDeadline());
     }
 
+    // 5. 프로젝트 삭제
     @Transactional
     public void deleteProject(Long id, Long userId) {
         Project project = projectRepository.findById(id)
@@ -88,6 +89,8 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
+
+
     // 유저 아이디가 리더인 프로젝트 찾는 로직
     @Transactional(readOnly = true)
     public List<ProjectSummaryResponseDto> getProjectsByLeader(Long leaderId) {
@@ -96,6 +99,8 @@ public class ProjectService {
                 .map(ProjectSummaryResponseDto::new)
                 .toList();
     }
+
+
 
     public List<ProjectSummaryResponseDto> getJoinedProjects(Long userId) {
         // 내가 리더인 프로젝트
@@ -109,5 +114,8 @@ public class ProjectService {
                 .map(ProjectSummaryResponseDto::new)
                 .toList();
     }
+
+
+
 
 }
