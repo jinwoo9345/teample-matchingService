@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -32,17 +35,23 @@ public class Application {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Enumerated(EnumType.STRING)
-    private ProjectRole applyRole;
+    @ElementCollection(targetClass = ProjectRole.class)
+    @CollectionTable(
+            name = "application_apply_roles", // 별도의 테이블 이름 지정
+            joinColumns = @JoinColumn(name = "application_id") // 외래키 설정
+    )
+    @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
+    @Column(name = "role_name")
+    private List<ProjectRole> applyRoles = new ArrayList<>();
 
 
     @Builder
-    public Application(User user, Project project, String introduction,ProjectRole applyRole) {
+    public Application(User user, Project project, String introduction,List<ProjectRole> applyRoles) {
         this.user = user;
         this.project = project;
         this.introduction = introduction;
         this.status = ApplicationStatus.PENDING;
-        this.applyRole = applyRole;
+        this.applyRoles = applyRoles;
     }
 
     // 승인 메소드

@@ -17,7 +17,6 @@ public class ProjectMember extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String role;
 
     private int contribution;
 
@@ -48,7 +47,6 @@ public class ProjectMember extends BaseTimeEntity {
                 .user(user)
                 .projectRole(projectRole)
                 .build();
-        member.role = "MEMBER";
         return member;
     }
 }

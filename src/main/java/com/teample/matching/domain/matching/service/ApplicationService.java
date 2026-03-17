@@ -6,6 +6,7 @@ import com.teample.matching.domain.matching.dto.ApplicationResponseDto;
 import com.teample.matching.domain.matching.dto.ApplicationSummaryResponseDto;
 import com.teample.matching.domain.matching.repository.ApplicationRepository;
 import com.teample.matching.domain.project.domain.Project;
+import com.teample.matching.domain.project.domain.ProjectRole;
 import com.teample.matching.domain.project.repository.ProjectRepository;
 import com.teample.matching.domain.project.service.ProjectMemberService;
 import com.teample.matching.domain.user.domain.User;
@@ -55,7 +56,7 @@ public class ApplicationService {
         Application application = Application.builder()
                 .user(user)
                 .project(project)
-                .applyRole(requestDto.getProjectRole())
+                .applyRoles(requestDto.getProjectRoles())
                 .introduction(requestDto.getIntroduction())
                 .build();
 
@@ -81,7 +82,7 @@ public class ApplicationService {
 
     //3. 지원서 승인 메소드
     @Transactional
-    public void acceptApplication(Long applicationId, Long currentUserId) {
+    public void acceptApplication(Long applicationId, Long currentUserId, ProjectRole role) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(()->new NotFoundException("지원서를 찾을 수 없습니다!!"));
 
@@ -92,7 +93,7 @@ public class ApplicationService {
         project.validateLeader(currentUserId);
 
         // 프로젝트 상태 검증 및 멤버 추가
-        projectMemberService.addMember(project, user,application.getApplyRole());
+        projectMemberService.addMember(project, user, role);
 
         // 지원서 상태  승인 변경
         application.accept();

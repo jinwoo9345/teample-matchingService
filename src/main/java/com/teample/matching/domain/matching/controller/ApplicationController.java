@@ -3,6 +3,7 @@ package com.teample.matching.domain.matching.controller;
 import com.teample.matching.domain.matching.dto.ApplicationRequestDto;
 import com.teample.matching.domain.matching.dto.ApplicationResponseDto;
 import com.teample.matching.domain.matching.service.ApplicationService;
+import com.teample.matching.domain.project.domain.ProjectRole;
 import com.teample.matching.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,12 +36,13 @@ public class ApplicationController {
         return ResponseEntity.ok(ApiResponse.success("지원자 조회 성공",applicationService.findAllApplication(projectId, userId)) );
     }
     // 3. 프로젝트 지원자 승인
-    @PatchMapping("/{applicationId}/accept")
+    @PatchMapping("/{applicationId}/accept/{role}")
     public ResponseEntity<ApiResponse<Void>> acceptApplication(
             @PathVariable Long applicationId,
-            @AuthenticationPrincipal Long userId) {
-
-        applicationService.acceptApplication(applicationId, userId);
+            @AuthenticationPrincipal Long userId,
+            @PathVariable ProjectRole role
+    ) {
+        applicationService.acceptApplication(applicationId, userId,role);
         return ResponseEntity.ok(ApiResponse.success("지원자 승인 성공", null));
     }
 
