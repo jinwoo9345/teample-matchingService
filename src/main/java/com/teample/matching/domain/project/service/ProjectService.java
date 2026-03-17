@@ -89,6 +89,33 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
+    // 6. 프로젝트 모집 완료 상태변경
+    @Transactional
+    public void completeMember(Long projectId, Long userId) {
+        // 멤버 모집완료 처리 로직
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트 입니다"));
+
+        if(!project.getLeader().getId().equals(userId)) {
+            throw new BadRequestException("해당 권한이 없습니다!");
+        }
+
+        project.changeStatusToComplete();
+
+    }
+
+    // 7. 프로젝트 완전 종료 상태변경 로직
+    @Transactional
+    public void finishProject(Long projectId, Long userId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(()->new NotFoundException("존재하지 않는 프로젝트 입니다"));
+
+        if(!project.getLeader().getId().equals(userId)) {
+            throw new BadRequestException("해당 권한이 없습니다!");
+        }
+
+        project.changeStatusToFinish();
+    }
 
 
     // 유저 아이디가 리더인 프로젝트 찾는 로직

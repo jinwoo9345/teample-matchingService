@@ -71,4 +71,24 @@ public class ProjectController {
         return ResponseEntity.ok(ApiResponse.success("프로젝트 삭제 성공", null));
     }
 
+    // 6. 프로젝트 모집완료
+    @PatchMapping("/{projectId}/completRecruit")
+    public ResponseEntity<ApiResponse<Void>> completeRecruit(
+            @PathVariable Long projectId,
+            @AuthenticationPrincipal Long userId
+    ){
+        projectService.completeMember(projectId, userId);
+        return ResponseEntity.ok(ApiResponse.success("팀원 모집 마감!",null));
+    }
+
+    // 7. 프로젝트 완료 후 종료
+    @PatchMapping("{projectId}/finishProject")
+    public ResponseEntity<ApiResponse<Void>> finishProject(
+        @PathVariable Long projectId,
+        @AuthenticationPrincipal Long userId
+    ){
+        projectService.finishProject(projectId, userId);
+        return ResponseEntity.ok(ApiResponse.success("프로젝트가 종료 되었습니다!",null));
+    }
+
 }

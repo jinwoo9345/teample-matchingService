@@ -22,10 +22,11 @@ public class ProjectMemberService {
     // 멤버 추가 (리더/팀원 공통)
     @Transactional
     public void addMember(Project project, User user , ProjectRole projectRole) {
-        project.joinMember();
         ProjectMember member = ProjectMember.createMember(project, user,projectRole);
+        project.joinMember(member);
         projectMemberRepository.save(member);
     }
+
 
     // 유저가 참여 중인 프로젝트 리스트 조회
     public List<Project> findProjectsByUserId(Long userId) {
@@ -34,6 +35,8 @@ public class ProjectMemberService {
                 .map(ProjectMember::getProject)
                 .toList();
     }
+
+
 }
 
 

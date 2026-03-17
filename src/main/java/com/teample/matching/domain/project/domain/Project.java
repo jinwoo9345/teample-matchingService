@@ -1,9 +1,11 @@
 package com.teample.matching.domain.project.domain;
 
 
+import com.teample.matching.domain.review.domain.Review;
 import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.global.common.entity.BaseTimeEntity;
 import com.teample.matching.domain.tag.domain.Tag;
+import com.teample.matching.global.error.exception.BadRequestException;
 import com.teample.matching.global.error.exception.ForbiddenException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -51,10 +53,16 @@ public class Project extends BaseTimeEntity {
 
 
     // ProjectTag 리스트 추가
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectTag> projectTags = new ArrayList<>();
 
+    // 프로젝트 멤버 리스트
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectMember> projectMembers = new ArrayList<>();
 
+    //프로젝트 리뷰 리스트
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     @Builder // 빌더 패턴 추가
     public Project(String title, String content, String memberRole ,int capacity, LocalDateTime deadline, String period, User leader) {
@@ -76,18 +84,37 @@ public class Project extends BaseTimeEntity {
         this.capacity = capacity;
     }
 
-    public void joinMember() {
+    public void joinMember(ProjectMember member) {
         // 1. 검증: 참가 가능한지 확인
         validateForApply();
 
-        // 2. 상태 변경: 현재 참여 인원 증가
+        // 2. 프로젝트 멤버에 추가
+        this.projectMembers.add(member);
+
+        // 3. 상태 변경: 현재 참여 인원 증가
         this.currentMemberCount++;
 
-        // 3. 참여후 인원 재확인
+        // 4. 참여후 인원 재확인
         if (isFull()) {
             changeStatusToComplete();
         }
     }
+
+
+
+    public void addReview(Review review) {
+        validateProjectFinish();
+        this.reviews.add(review);
+    }
+
+
+
+    public void validateProjectFinish() {
+        if(this.status != ProjectStatus.FINISHED) {
+            throw new BadRequestException("프로젝트가 아직 진행중입니다!");
+        }
+    }
+
 
     public void validateForApply() {
         if (this.status != ProjectStatus.RECRUITING) {
@@ -98,19 +125,36 @@ public class Project extends BaseTimeEntity {
         }
     }
 
+    public void validateMember(Long userId) {
+        boolean isMember = this.projectMembers.stream()
+                .anyMatch(member -> member.getUser().getId().equals(userId));
+
+        if (!isMember) {
+            throw new ForbiddenException("해당 프로젝트의 참여자가 아닙니다.");
+        }
+    }
+
+
+    // 정원확인
     private boolean isFull() {
         return this.currentMemberCount >= this.capacity;
     }
 
-    private void changeStatusToComplete() {
+    // 모집 상태 완료 변경
+    public void changeStatusToComplete() {
         this.status = ProjectStatus.COMPLETE;
     }
 
+    // 프로젝트 완전 종료
+    public void changeStatusToFinish() {this.status = ProjectStatus.FINISHED; }
+
+    // 리더 권한 확인
     public void validateLeader(Long userId) {
         if (!this.leader.getId().equals(userId)) {
             throw new ForbiddenException("리더 권한이 없습니다.");
         }
     }
+
 
     public void addTag(Tag tag) {
         ProjectTag projectTag = ProjectTag.builder()

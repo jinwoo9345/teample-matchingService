@@ -2,8 +2,11 @@ package com.teample.matching.domain.matching.dto;
 
 import com.teample.matching.domain.matching.domain.Application;
 import com.teample.matching.domain.matching.domain.ApplicationStatus;
+import com.teample.matching.domain.project.domain.ProjectRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -15,6 +18,8 @@ public class ApplicationResponseDto {
     private String nickName;
 
     private String introduction;
+
+    private List<ProjectRole> projectRoles;
 
     private ApplicationStatus status;
 
