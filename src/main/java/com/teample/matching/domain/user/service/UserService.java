@@ -14,6 +14,7 @@ import com.teample.matching.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class UserService {
     private final ProjectService projectService;
     private final ApplicationService applicationService;
     private final JwtTokenProvider jwtTokenProvider; // 토큰 생성기
+    private final PasswordEncoder passwordEncoder;
 
     //1. 회원가입 로직
     @Transactional
@@ -34,7 +36,7 @@ public class UserService {
 
         User user = User.builder()
                 .email(requestDto.getEmail())
-                .password(requestDto.getPassword())
+                .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickName(requestDto.getNickName())
                 .major(requestDto.getMajor())
                 .profile(requestDto.getProfile())
@@ -61,7 +63,7 @@ public class UserService {
                 .orElseThrow(() -> new BadRequestException("이메일 또는 비밀번호를 다시 확인해주세요!"));
 
         // 2. 비밀번호 체크
-        if (!user.getPassword().equals(requestDto.getPassword())) {
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new BadRequestException("이메일 또는 비밀번호를 다시 확인해주세요!");
         }
 
