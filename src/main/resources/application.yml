@@ -1,9 +1,11 @@
+server:
+  port: 8081
+
 spring:
   profiles:
-    include: secret  # application-secret.yml을 포함
+    include: secret
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
     url: jdbc:mysql://localhost:3306/teample_db?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
 
   jpa:
@@ -13,3 +15,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+
+jwt:
+  access-token-expiration: 3600000
