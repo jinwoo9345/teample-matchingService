@@ -1,15 +1,17 @@
 package com.teample.matching.domain.user.domain;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Builder
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -38,8 +40,20 @@ public class User {
     @JoinColumn(name = "tier_id")
     private Tier tier;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userTag_id")
-    private UserTag userTag;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTag> userTags = new ArrayList<>();
+
+
+    public void addUserTag(UserTag userTag) {
+        this.userTags.add(userTag);
+    }
+
+    public void updateProfile(String nickName, String major, String profile, String introduction) {
+        this.nickName = nickName;
+        this.major = major;
+        this.profile = profile;
+        this.introduction = introduction;
+    }
 }

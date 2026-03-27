@@ -18,9 +18,9 @@ public class UserMypageResponseDto {
 
     private String nickname;
 
-    //private UserTag userTag;
+    private List<String> userTags;
 
-    //private Tier tier
+    //private Tier tier;
     private String introduction;
 
     private List<ProjectSummaryResponseDto> myProjects;
@@ -33,6 +33,9 @@ public class UserMypageResponseDto {
                                  List<ApplicationSummaryResponseDto> appliedProjects) {
         this.email = user.getEmail();
         this.nickname = user.getNickName();
+        this.userTags = user.getUserTags().stream()
+                .map(userTag -> userTag.getTag().getTagName())
+                .toList();
         this.introduction = user.getIntroduction();
         this.myProjects = myProjects;
         this.appliedProjects = appliedProjects;

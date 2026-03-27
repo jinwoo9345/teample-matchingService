@@ -1,8 +1,8 @@
 package com.teample.matching.domain.user.domain;
 
-
 import com.teample.matching.domain.tag.domain.Tag;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +23,10 @@ public class UserTag {
     @JoinColumn(name = "user_id")
     private User user;
 
+
+    @Builder
+    public UserTag(Tag tag, User user) {
+        this.tag = tag;
+        this.user = user;
+    }
 }

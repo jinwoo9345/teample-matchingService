@@ -53,8 +53,8 @@ public class ProjectController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Long>> updateProject(
             @PathVariable Long id,
-            @RequestBody ProjectUpdateRequestDto requestDto,
-            @AuthenticationPrincipal Long userId // ✨ 수정을 시도하는 유저 ID
+            @Valid @RequestBody ProjectUpdateRequestDto requestDto,
+            @AuthenticationPrincipal Long userId
     ) {
         // 본인 확인을 위해 userId를 넘깁니다.
         projectService.updateProject(id, requestDto, userId);
@@ -82,7 +82,7 @@ public class ProjectController {
     }
 
     // 7. 프로젝트 완료 후 종료
-    @PatchMapping("{projectId}/finishProject")
+    @PatchMapping("/{projectId}/finishProject")
     public ResponseEntity<ApiResponse<Void>> finishProject(
         @PathVariable Long projectId,
         @AuthenticationPrincipal Long userId
@@ -90,5 +90,7 @@ public class ProjectController {
         projectService.finishProject(projectId, userId);
         return ResponseEntity.ok(ApiResponse.success("프로젝트가 종료 되었습니다!",null));
     }
+
+
 
 }

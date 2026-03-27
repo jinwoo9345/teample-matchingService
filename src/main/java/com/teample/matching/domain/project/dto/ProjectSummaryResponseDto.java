@@ -5,19 +5,22 @@ import com.teample.matching.domain.project.domain.ProjectStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class ProjectSummaryResponseDto {
     private Long id;
     private String title;
-    private String contentSummary;
+    private List<String> projectTags;
     private ProjectStatus status;
 
     public ProjectSummaryResponseDto(Project project) {
         this.id = project.getId();
         this.title = project.getTitle();
-        // 요약본으로 만들기 필요
-        this.contentSummary = project.getContent();
+        this.projectTags = project.getProjectTags().stream()
+                .map(projectTag -> projectTag.getTag().getTagName())
+                .toList();
         this.status = project.getStatus();
     }
 }

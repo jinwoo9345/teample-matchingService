@@ -134,6 +134,10 @@ public class Project extends BaseTimeEntity {
         }
     }
 
+     public void addProjectTag(ProjectTag projectTag) {
+        this.projectTags.add(projectTag);
+     }
+
 
     // 정원확인
     private boolean isFull() {

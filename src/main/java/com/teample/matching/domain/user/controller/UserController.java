@@ -43,7 +43,6 @@ public class UserController {
     }
 
     // 4. 유저 상세보기 (타인 프로필)
-    // UserController.java 4번 메소드 수정
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserProfileResponseDto>> getUserProfile(
             @AuthenticationPrincipal Long currentUserId, // 조회 주체 (current)
@@ -52,5 +51,16 @@ public class UserController {
         UserProfileResponseDto userProfileResponseDto = userService.getUserProfile(currentUserId, userId);
         return ResponseEntity.ok(ApiResponse.success("유저 상세조회 성공", userProfileResponseDto));
     }
+
+    //5. 유저 업데이트
+    @PutMapping("/mypage")
+    public ResponseEntity<ApiResponse<Void>> updateUserProfile(
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody UserUpdateProfileRequestDto requestDto
+    ){
+        userService.updateProfile(requestDto, userId);
+        return ResponseEntity.ok(ApiResponse.success("프로필 업데이트 성공", null));
+    }
+
 
 }

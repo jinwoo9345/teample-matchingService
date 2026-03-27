@@ -2,11 +2,13 @@ package com.teample.matching.domain.project.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -19,6 +21,9 @@ public class ProjectCreateRequestDto {
 
     @NotBlank(message = "프로젝트 내용은 필수입니다.")
     private String content;
+
+    @NotEmpty(message = "최소 하나 이상의 태그를 선택해야 합니다.")
+    private Set<String> projectTags;
 
     @NotBlank(message = "프로젝트에 필요한 멤버를 적어주세요.")
     private String memberRole;

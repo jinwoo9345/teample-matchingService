@@ -19,8 +19,8 @@ public class UserProfileResponseDto {
     private int temperature;
     private boolean isMe;
     private List<ProjectSummaryResponseDto> projects;
-    //private Tier tier;
-    //private UserTag userTag;
+   // private Tier tier;
+    private List<String> userTags;
 
 
     @Builder
@@ -29,6 +29,9 @@ public class UserProfileResponseDto {
         this.nickName = user.getNickName();
         this.introduction = user.getIntroduction();
         this.temperature = user.getTemperature();
+        this.userTags = user.getUserTags().stream()
+                .map(userTag -> userTag.getTag().getTagName())
+                .toList();
         this.projects = projects;
         this.isMe = isMe;
     }

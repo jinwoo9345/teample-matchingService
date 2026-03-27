@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -14,6 +15,7 @@ public class ProjectDetailResponseDto {
 
     private Long id;
     private String title;
+    private List<String> projectTags;
     private LocalDateTime deadline;
     private Long leaderId;
     private String period;
@@ -27,6 +29,9 @@ public class ProjectDetailResponseDto {
 
         this.id = project.getId();
         this.title = project.getTitle();
+        this.projectTags = project.getProjectTags().stream()
+                .map(projectTag -> projectTag.getTag().getTagName())
+                .toList();
         this.deadline = project.getDeadline();
         this.leaderId = project.getLeader().getId();
         this.period = project.getPeriod();

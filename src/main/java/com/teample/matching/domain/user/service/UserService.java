@@ -5,7 +5,10 @@ import com.teample.matching.domain.matching.dto.ApplicationSummaryResponseDto;
 import com.teample.matching.domain.matching.service.ApplicationService;
 import com.teample.matching.domain.project.dto.ProjectSummaryResponseDto;
 import com.teample.matching.domain.project.service.ProjectService;
+import com.teample.matching.domain.tag.domain.Tag;
+import com.teample.matching.domain.tag.service.TagService;
 import com.teample.matching.domain.user.domain.User;
+import com.teample.matching.domain.user.domain.UserTag;
 import com.teample.matching.domain.user.dto.*;
 import com.teample.matching.domain.user.repository.UserRepository;
 import com.teample.matching.global.error.exception.BadRequestException;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +32,7 @@ public class UserService {
     private final ApplicationService applicationService;
     private final JwtTokenProvider jwtTokenProvider; // 토큰 생성기
     private final PasswordEncoder passwordEncoder;
+    private final TagService tagService;
 
     //1. 회원가입 로직
     @Transactional
@@ -109,6 +114,34 @@ public class UserService {
                 .projects(projects)
                 .isMe(isMe)
                 .build();
+    }
+
+    // 5. 유저 프로필 업데이트
+    @Transactional
+    public void updateProfile(UserUpdateProfileRequestDto requestDto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new NotFoundException("유저가 존재하지 않습니다."));
+
+        user.updateProfile(
+                requestDto.getNickName(),
+                requestDto.getMajor(),
+                requestDto.getProfile(),
+                requestDto.getIntroduction()
+                );
+
+
+        List<Tag> tags = tagService.getOrCreateTags(new ArrayList<>(requestDto.getTags()));
+
+        user.getUserTags().clear();
+
+        for (Tag tag : tags) {
+            UserTag userTag = UserTag.builder()
+                    .user(user)
+                    .tag(tag)
+                    .build();
+
+            user.addUserTag(userTag);
+        }
     }
 
 }

@@ -2,8 +2,11 @@ package com.teample.matching.domain.project.service;
 
 import com.teample.matching.domain.project.domain.Project;
 import com.teample.matching.domain.project.domain.ProjectRole;
+import com.teample.matching.domain.project.domain.ProjectTag;
 import com.teample.matching.domain.project.dto.*;
 import com.teample.matching.domain.project.repository.ProjectRepository;
+import com.teample.matching.domain.tag.domain.Tag;
+import com.teample.matching.domain.tag.service.TagService;
 import com.teample.matching.domain.user.domain.User;
 import com.teample.matching.domain.user.repository.UserRepository;
 import com.teample.matching.global.error.exception.BadRequestException;
@@ -12,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -24,6 +28,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final ProjectMemberService projectMemberService;
+    private final TagService tagService;
 
     // 1. 프로젝트 생성
     @Transactional
@@ -42,6 +47,15 @@ public class ProjectService {
                 .build();
 
         Project savedProject = projectRepository.save(project);
+
+        List<Tag> tags = tagService.getOrCreateTags(new ArrayList<>(requestDto.getProjectTags()));
+        for (Tag tag : tags) {
+            ProjectTag projectTag = ProjectTag.builder()
+                    .project(savedProject)
+                    .tag(tag)
+                    .build();
+            savedProject.addProjectTag(projectTag);
+        }
 
         // [중요] 프로젝트 생성 시 리더를 멤버 테이블에도 등록!
         projectMemberService.addMember(savedProject, leader , ProjectRole.LEADER);
@@ -65,7 +79,7 @@ public class ProjectService {
         return new ProjectDetailResponseDto(project);
     }
 
-    // 4. 프로젝트 업데이트
+    // 4. 프로젝트 수정
     @Transactional
     public void updateProject(Long id, ProjectUpdateRequestDto requestDto,Long userId) {
         Project project = projectRepository.findById(id)
@@ -76,6 +90,19 @@ public class ProjectService {
         }
 
         project.update(requestDto.getTitle(),requestDto.getContent(),requestDto.getCapacity(),requestDto.getPeriod(),requestDto.getDeadline());
+
+        List<Tag> Tags = tagService.getOrCreateTags(new ArrayList<>(requestDto.getProjectTags()));
+
+        project.getProjectTags().clear();
+
+        for(Tag tag : Tags) {
+            ProjectTag projectTag = ProjectTag.builder()
+                    .project(project)
+                    .tag(tag)
+                    .build();
+            project.addProjectTag(projectTag);
+        }
+
     }
 
     // 5. 프로젝트 삭제
@@ -128,7 +155,6 @@ public class ProjectService {
     }
 
 
-
     public List<ProjectSummaryResponseDto> getJoinedProjects(Long userId) {
         // 내가 리더인 프로젝트
         List<Project> leadingProjects = projectRepository.findByLeaderId(userId);
@@ -141,8 +167,5 @@ public class ProjectService {
                 .map(ProjectSummaryResponseDto::new)
                 .toList();
     }
-
-
-
 
 }
