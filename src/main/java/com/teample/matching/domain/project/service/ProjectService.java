@@ -37,6 +37,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다!"));
 
         Project project = Project.builder()
+                .projectType(requestDto.getProjectType())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .memberRole(requestDto.getMemberRole())

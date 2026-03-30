@@ -1,5 +1,6 @@
 package com.teample.matching.domain.project.dto;
 
+import com.teample.matching.domain.project.domain.ProjectType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,6 +14,9 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 public class ProjectCreateRequestDto {
+
+    @NotBlank(message = "타입 선택은 필수입니다.")
+    private ProjectType projectType;
 
     @NotBlank(message = "프로젝트 제목은 필수입니다.")
     private String title;

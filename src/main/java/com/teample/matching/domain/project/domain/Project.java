@@ -26,6 +26,10 @@ public class Project extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProjectType projectType;
+
     @Column(nullable = false)
     private String title;
 
@@ -65,7 +69,8 @@ public class Project extends BaseTimeEntity {
     private List<Review> reviews = new ArrayList<>();
 
     @Builder // 빌더 패턴 추가
-    public Project(String title, String content, String memberRole ,int capacity, LocalDateTime deadline, String period, User leader) {
+    public Project(ProjectType projectType ,String title, String content, String memberRole ,int capacity, LocalDateTime deadline, String period, User leader) {
+        this.projectType = projectType;
         this.title = title;
         this.content = content;
         this.memberRole = memberRole;
