@@ -29,16 +29,17 @@
 
 도메인 주도 설계(Domain-Driven Design) 패턴을 적용하여 비즈니스 모듈별로 패키지를 깔끔하게 분리했습니다.
 
+```
 com.teample.matching
-├── domain/
-│   ├── user/        # 회원 가입, 로그인, 프로필, 온도(Temperature) 및 티어(Tier) 관리
-│   ├── project/     # 프로젝트 모집글 생성, 상태 관리, 모집 인원 및 역할 설정
-│   ├── matching/    # 프로젝트 지원 신청, 승인/거절 매칭 워크플로우
-│   ├── chat/        # 팀원 간 채팅방, 메시지, 참여자 정보
-│   ├── review/      # 프로젝트 종료 후 팀원 상호 평가 시스템
-│   └── tag/         # 기술 스택 및 사용자/프로젝트 매칭 태그
-└── global/          # Security Config, JWT Provider/Filter, Global Exception Interceptor, Swagger Config
-
+├── global/            # Security Config, JWT, Global Exception, Swagger Config
+└── domain/
+    ├── user/          # 회원가입, 로그인, 프로필, 온도(Temperature), 티어(Tier)
+    ├── project/       # 프로젝트 모집글 생성, 상태 관리, 모집 인원 및 역할 설정
+    ├── matching/      # 프로젝트 지원 신청, 승인/거절 매칭 워크플로우
+    ├── chat/          # 팀원 간 채팅방, 메시지, 참여자 정보
+    ├── review/        # 프로젝트 종료 후 팀원 상호 평가 시스템
+    └── tag/           # 기술 스택 및 사용자/프로젝트 매칭 태그
+```
 각 도메인 모듈 내부에는 `Controller` ➔ `Service` ➔ `Repository` ➔ `DTO` ➔ `Entity(Domain)` 계층이 명확히 구분되어 있습니다.
 
 ---
